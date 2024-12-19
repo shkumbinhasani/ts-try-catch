@@ -40,12 +40,14 @@ function iMightFail(): string & Throws<CustomError> {
   throw new Error();
 }
 
-const [data1, error1] = tryCatch(() => iMightFail());
+const [data, error] = tryCatch(() => iMightFail());
 
 if (error1) {
-  console.log("i Might fail failed", error1.message);
+  console.log("i Might fail failed", error.message);
+  //                                  ^? Error | CustomError
 } else {
-  console.log("i succeeded", data1);
+  console.log("i succeeded", data);
+  //                            ^? string
 }
 
 ```
@@ -68,12 +70,14 @@ async function iMightFailAsync(): Promise<string & Throws<CustomError>> {
   throw new Error();
 }
 
-const [data2, error2] = await tryCatch(() => iMightFailAsync());
+const [data, error] = await tryCatch(() => iMightFailAsync());
 
 if (error2) {
-  console.log("i Might fail async failed", error2.message);
+  console.log("i Might fail async failed", error.message);
+  //                                          ^? Error | CustomError
 } else {
-  console.log("i Might fail async succeeded", data2);
+  console.log("i Might fail async succeeded", data);
+    //                                         ^? string
 }
 ```
 
