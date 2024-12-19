@@ -1,11 +1,25 @@
 {
   "name": "ts-try-catch",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "version": "0.0.1",
+  "description": "A utility package for handling try-catch blocks in TypeScript.",
+  "main": "./lib/try-catch.js",
+  "types": "./lib/try-catch.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"No test specified\" && exit 0"
   },
-  "peerDependencies": {
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ts-try-catch.git"
+  },
+  "keywords": [
+    "typescript",
+    "try-catch",
+    "error-handling"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
     "typescript": "^5.0.0"
   }
 }
