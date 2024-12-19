@@ -81,3 +81,20 @@ if (error2) {
 }
 ```
 
+### With normal typescript inference
+
+```typescript
+function iMightFailOrNot() {
+    return "success"
+}
+
+const [data3, error3] = tryCatch(iMightFailOrNot);
+
+if (error3) {
+    console.log("i Might fail or not failed", error3.message)
+    //                                          ^? Error
+} else {
+    console.log("i Might fail or not succeeded", data3)
+    //                                            ^? string
+}
+```

@@ -46,3 +46,18 @@ if (error2) {
     console.log("i Might fail async succeeded", data2)
     //                                            ^?
 }
+
+
+function iMightFailOrNot() {
+    return "success"
+}
+
+const [data3, error3] = tryCatch(iMightFailOrNot);
+
+if (error3) {
+    console.log("i Might fail or not failed", error3.message)
+    //                                          ^?
+} else {
+    console.log("i Might fail or not succeeded", data3)
+    //                                            ^?
+}
