@@ -1,23 +1,30 @@
 # Type-Safe Try-Catch Pattern for TypeScript
 
-This repository demonstrates an experimental approach to handling try-catch blocks in TypeScript with enhanced type safety and flexibility. This pattern allows developers to explicitly define the types of errors that can be thrown while maintaining compatibility with traditional try-catch usage.
+A lightweight TypeScript utility that provides type-safe error handling through a functional approach. This library allows you to explicitly define error types while maintaining full TypeScript inference and zero runtime overhead.
+
+## Installation
+
+```bash
+npm install @shkumbinhsn/try-catch
+```
 
 ## Key Features
 
-1. **Full TypeScript Flexibility**: 
-   - Use the `Throws` utility to define the types of errors a function might throw.
-   - If type definitions are not needed, the function works like a traditional try-catch and returns a tuple `[data, error]`.
+- **🔒 Type Safety**: Explicitly declare what errors your functions can throw
+- **🎯 Zero Runtime Overhead**: Types are compile-time only using TypeScript's structural typing
+- **🔄 Async/Sync Support**: Works seamlessly with both synchronous and asynchronous functions
+- **📦 Lightweight**: Minimal footprint with no dependencies
+- **🧠 Smart Inference**: Falls back to standard TypeScript inference when no error types are specified
+- **🛡️ Tuple-based**: Returns `[data, error]` tuples for explicit error handling
 
-2. **Explicit Error Types**:
-   - For functions throwing multiple errors (e.g., `CustomError`, `Error`), use `Throws` to explicitly declare them.
+## Why Use This Pattern?
 
-3. **Ease of Use**:
-   - Handle returned tuples with an `if` statement to separate success from failure cases.
+Traditional try-catch blocks in TypeScript don't provide type information about what errors might be thrown. This library solves that by:
 
-## Limitations
-
-- **Duplicate Definitions**: 
-  - Errors need to be defined twice: once for throwing them and once in the return type. This is a design choice to ensure type safety, but it does not affect runtime behavior.
+1. Making error types explicit in function signatures
+2. Forcing explicit error handling through tuple destructuring
+3. Providing better IntelliSense and type checking
+4. Maintaining compatibility with existing code
 
 ---
 
@@ -26,7 +33,7 @@ This repository demonstrates an experimental approach to handling try-catch bloc
 ### Defining a Function with Error Handling
 
 ```typescript
-import { tryCatch, type Throws } from "./lib/try-catch";
+import { tryCatch, type Throws } from "@shkumbinhsn/try-catch";
 
 class CustomError extends Error {}
 
@@ -35,66 +42,108 @@ function iMightFail(): string & Throws<CustomError> {
   if (random > 0.2) {
     return "success";
   } else if (random > 0.5) {
-    throw new CustomError();
+    throw new CustomError("Something went wrong");
   }
-  throw new Error();
+  throw new Error("Generic error");
 }
 
 const [data, error] = tryCatch(() => iMightFail());
 
-if (error1) {
-  console.log("i Might fail failed", error.message);
-  //                                  ^? Error | CustomError
+if (error) {
+  console.log("Operation failed:", error.message);
+  // TypeScript knows: error is Error | CustomError
 } else {
-  console.log("i succeeded", data);
-  //                            ^? string
+  console.log("Operation succeeded:", data);
+  // TypeScript knows: data is string
 }
-
 ```
 
 ### Async Functions with Errors
 
 ```typescript
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function iMightFailAsync(): Promise<string & Throws<CustomError>> {
-  await sleep(200);
-  const random = Math.random();
-  if (random > 0.2) {
-    return "success";
-  } else if (random > 0.5) {
-    throw new CustomError();
+async function fetchUserData(id: string): Promise<User & Throws<ValidationError | NetworkError>> {
+  if (!id) {
+    throw new ValidationError("User ID is required");
   }
-  throw new Error();
+  
+  const response = await fetch(`/api/users/${id}`);
+  if (!response.ok) {
+    throw new NetworkError("Failed to fetch user data");
+  }
+  
+  return response.json();
 }
 
-const [data, error] = await tryCatch(() => iMightFailAsync());
+const [userData, error] = await tryCatch(() => fetchUserData("123"));
 
-if (error2) {
-  console.log("i Might fail async failed", error.message);
-  //                                          ^? Error | CustomError
+if (error) {
+  if (error instanceof ValidationError) {
+    console.log("Validation error:", error.message);
+  } else if (error instanceof NetworkError) {
+    console.log("Network error:", error.message);
+  } else {
+    console.log("Unexpected error:", error.message);
+  }
 } else {
-  console.log("i Might fail async succeeded", data);
-    //                                         ^? string
+  console.log("User data:", userData);
+  // TypeScript knows: userData is User
 }
 ```
 
-### With normal typescript inference
+### Without Explicit Error Types
+
+When you don't specify error types, the library falls back to standard TypeScript inference:
 
 ```typescript
-function iMightFailOrNot() {
-    return "success"
+function regularFunction() {
+  return "success";
 }
 
-const [data3, error3] = tryCatch(iMightFailOrNot);
+const [data, error] = tryCatch(regularFunction);
 
-if (error3) {
-    console.log("i Might fail or not failed", error3.message)
-    //                                          ^? Error
+if (error) {
+  console.log("Operation failed:", error.message);
+  // TypeScript knows: error is Error
 } else {
-    console.log("i Might fail or not succeeded", data3)
-    //                                            ^? string
+  console.log("Operation succeeded:", data);
+  // TypeScript knows: data is string
 }
 ```
+
+## API Reference
+
+### `tryCatch<T>(fn: () => T): TryCatchReturn<T>`
+
+Executes a function within a try-catch block and returns a result tuple.
+
+**Parameters:**
+- `fn`: Function to execute (can be sync or async)
+
+**Returns:**
+- `[data, null]` on success
+- `[null, error]` on failure
+
+### `Throws<T extends Error>`
+
+Type utility for declaring error types in function signatures.
+
+**Usage:**
+```typescript
+function myFunction(): ReturnType & Throws<MyError> {
+  // function implementation
+}
+```
+
+## Limitations
+
+- **Duplicate Definitions**: Error types must be declared in both the throw statement and return type
+- **Runtime Validation**: No runtime enforcement of declared error types
+- **Learning Curve**: Requires understanding of TypeScript's structural typing
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues and pull requests.
+
+## License
+
+MIT
