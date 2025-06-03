@@ -1,6 +1,6 @@
 ![cowboy trying to catch a horse](https://i.imgur.com/TzMOUUL.jpeg)
-[![npm version](https://img.shields.io/npm/v/@shkumbinhsn/fetcher.svg)](https://www.npmjs.com/package/@shkumbinhsn/fetcher)
-[![npm downloads](https://img.shields.io/npm/dm/@shkumbinhsn/fetcher.svg)](https://www.npmjs.com/package/@shkumbinhsn/fetcher)
+[![npm version](https://img.shields.io/npm/v/@shkumbinhsn/try-catch.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch)
+[![npm downloads](https://img.shields.io/npm/dm/@shkumbinhsn/try-catch.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch)
 # Type-Safe Try-Catch Pattern for TypeScript
 
 A lightweight TypeScript utility that provides type-safe error handling through a functional approach. This library allows you to explicitly define error types while maintaining full TypeScript inference and zero runtime overhead.
