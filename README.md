@@ -93,6 +93,35 @@ if (error) {
 }
 ```
 
+### Using `tc()` for Inferred Return Types
+
+When you want TypeScript to infer your return type but still declare possible errors, use the `tc()` helper:
+
+```typescript
+import { tryCatch, tc } from "@shkumbinhsn/try-catch";
+
+class APIError extends Error {}
+class NetworkError extends Error {}
+
+function fetchUser() {
+  const user = { id: "1", name: "Ada", email: "ada@example.com" };
+  // Return type is inferred: { id: string; name: string; email: string } & Throws<APIError | NetworkError>
+  return tc(user, [APIError, NetworkError]);
+}
+
+const [data, error] = tryCatch(fetchUser);
+
+if (error) {
+  console.log("Failed:", error.message);
+  // TypeScript knows: error is Error | APIError | NetworkError
+} else {
+  console.log("User:", data.email);
+  // TypeScript knows: data is { id: string; name: string; email: string }
+}
+```
+
+This is useful when you don't want to manually specify complex return types but still want typed errors.
+
 ### Without Explicit Error Types
 
 When you don't specify error types, the library falls back to standard TypeScript inference:
@@ -137,11 +166,31 @@ function myFunction(): ReturnType & Throws<MyError> {
 }
 ```
 
+### `tc<T, E>(value: T, errors: E[]): T & Throws<...>`
+
+Brands a return value with error types while letting TypeScript infer the return type.
+
+**Parameters:**
+- `value`: The value to return
+- `errors`: Array of error class constructors (used only for type inference)
+
+**Returns:**
+- The same value, branded with error types
+
+**Usage:**
+```typescript
+function myFunction() {
+  const result = computeSomething();
+  return tc(result, [ErrorA, ErrorB]);
+}
+```
+
 ## Limitations
 
 - **Duplicate Definitions**: Error types must be declared in both the throw statement and return type
 - **Runtime Validation**: No runtime enforcement of declared error types
 - **Learning Curve**: Requires understanding of TypeScript's structural typing
+- **Type Stripping**: TypeScript cannot reliably extract base types from branded intersections ([TS#62985](https://github.com/microsoft/TypeScript/issues/62985)). Error classes with custom instance properties may cause inconsistent type inference.
 
 ## Contributing
 

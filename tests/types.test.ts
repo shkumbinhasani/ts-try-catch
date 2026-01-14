@@ -1,4 +1,4 @@
-import { tryCatch, type Throws } from "../lib/try-catch";
+import { tryCatch, tc, type Throws } from "../lib/try-catch";
 
 type Expect<T extends true> = T;
 
@@ -48,6 +48,32 @@ const okResult = tryCatch(ok);
 const userResult = tryCatch(() => loadUser());
 const widgetResult = tryCatch(() => loadWidget());
 
+class APIError extends Error {}
+class NetworkError extends Error {}
+
+interface Post {
+  id: number;
+  title: string;
+}
+
+function tcInferredObject() {
+  const post = { id: 1, title: "Hello" };
+  return tc(post, [APIError, NetworkError]);
+}
+
+function tcInferredPrimitive() {
+  return tc("success", [APIError]);
+}
+
+function tcSingleError() {
+  const data: Post = { id: 1, title: "Test" };
+  return tc(data, [CustomError]);
+}
+
+const tcObjectResult = tryCatch(tcInferredObject);
+const tcPrimitiveResult = tryCatch(tcInferredPrimitive);
+const tcSingleErrorResult = tryCatch(tcSingleError);
+
 type Tests = [
   Expect<TypesMatch<ExtractData<typeof syncResult>, string>>,
   Expect<TypesMatch<ExtractError<typeof syncResult>, Error | CustomError>>,
@@ -59,4 +85,10 @@ type Tests = [
   Expect<TypesMatch<ExtractError<typeof userResult>, Error | UserError>>,
   Expect<TypesMatch<ExtractData<typeof widgetResult>, Widget>>,
   Expect<TypesMatch<ExtractError<typeof widgetResult>, Error | WidgetError>>,
+  Expect<ShapesMatch<ExtractData<typeof tcObjectResult>, { id: number; title: string }>>,
+  Expect<ShapesMatch<ExtractError<typeof tcObjectResult>, Error | APIError | NetworkError>>,
+  Expect<ShapesMatch<ExtractData<typeof tcPrimitiveResult>, "success">>, // literal type preserved
+  Expect<ShapesMatch<ExtractError<typeof tcPrimitiveResult>, Error | APIError>>,
+  Expect<ShapesMatch<ExtractData<typeof tcSingleErrorResult>, Post>>,
+  Expect<ShapesMatch<ExtractError<typeof tcSingleErrorResult>, Error | CustomError>>,
 ];

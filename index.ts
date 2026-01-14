@@ -1,4 +1,4 @@
-import { tryCatch, type Throws } from "./lib/try-catch";
+import { tryCatch, tc, type Throws } from "./lib/try-catch";
 
 class CustomError extends Error { }
 
@@ -97,4 +97,24 @@ if (modelError) {
     console.log("user model failed", modelError.message)
 } else {
     console.log("user model", modelData.label())
+}
+
+// Using tc() for inferred return types with declared errors
+class APIError extends Error { }
+class NetworkError extends Error { }
+
+function fetchUserWithTc() {
+    const user = { id: "1", name: "Ada", email: "ada@example.com" };
+    return tc(user, [APIError, NetworkError]);
+    // Return type is inferred: { id: string; name: string; email: string } & Throws<APIError | NetworkError>
+}
+
+const [tcData, tcError] = tryCatch(fetchUserWithTc);
+
+if (tcError) {
+    console.log("tc test failed", tcError.message)
+    //                             ^?
+} else {
+    console.log("tc test succeeded", tcData.email)
+    //                                ^?
 }
