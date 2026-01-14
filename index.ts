@@ -61,3 +61,40 @@ if (error3) {
     console.log("i Might fail or not succeeded", data3)
     //                                                  ^?
 }
+
+interface UserProfile {
+    id: string
+    name: string
+}
+
+class UserModel {
+    constructor(public id: string, public name: string) { }
+
+    label() {
+        return `${this.name} (${this.id})`
+    }
+}
+
+function fetchUserProfile(): UserProfile & Throws<CustomError> {
+    return { id: "1", name: "Ada" }
+}
+
+function fetchUserModel(): UserModel & Throws<CustomError> {
+    return new UserModel("1", "Ada")
+}
+
+const [profileData, profileError] = tryCatch(fetchUserProfile);
+
+if (profileError) {
+    console.log("user profile failed", profileError.message)
+} else {
+    console.log("user profile", profileData.name)
+}
+
+const [modelData, modelError] = tryCatch(fetchUserModel);
+
+if (modelError) {
+    console.log("user model failed", modelError.message)
+} else {
+    console.log("user model", modelData.label())
+}
