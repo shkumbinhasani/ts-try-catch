@@ -23,7 +23,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc --noEmit"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "typescript",
@@ -36,5 +38,8 @@
     "result-type"
   ],
   "author": "Shkumbin Hasani",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^1.2.0"
+  }
 }

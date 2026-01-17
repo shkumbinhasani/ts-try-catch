@@ -22,7 +22,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "tsc --noEmit"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "eslint",
@@ -37,9 +39,11 @@
   },
   "devDependencies": {
     "@types/eslint": "^8.56.0",
-    "eslint": "^8.56.0",
+    "@typescript-eslint/rule-tester": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "@typescript-eslint/utils": "^6.0.0"
+    "@typescript-eslint/utils": "^6.0.0",
+    "eslint": "^8.56.0",
+    "vitest": "^1.2.0"
   },
   "author": "Shkumbin Hasani",
   "license": "MIT"
