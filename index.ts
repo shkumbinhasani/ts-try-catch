@@ -105,7 +105,7 @@ class NetworkError extends Error { }
 
 function fetchUserWithTc() {
     const user = { id: "1", name: "Ada", email: "ada@example.com" };
-    return tc(user, [APIError, NetworkError]);
+    return tc(user).mightThrow<APIError | NetworkError>();
     // Return type is inferred: { id: string; name: string; email: string } & Throws<APIError | NetworkError>
 }
 

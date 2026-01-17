@@ -18,11 +18,8 @@ type TryCatchReturn<T> = T extends Promise<infer R>
 
 export declare function tryCatch<T>(fn: () => T): TryCatchReturn<T>;
 
-type ErrorConstructor = new (...args: any[]) => Error;
+interface TcBuilder<T> {
+  mightThrow<E extends Error>(): T & Throws<E>;
+}
 
-type UnionFromTuple<T extends ErrorConstructor[]> = InstanceType<T[number]>;
-
-export declare function tc<T, E extends ErrorConstructor[]>(
-  value: T,
-  errors: [...E]
-): T & Throws<UnionFromTuple<E>>;
+export declare function tc<T>(value: T): TcBuilder<T>;
