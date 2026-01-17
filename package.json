@@ -1,46 +1,21 @@
 {
-  "name": "@shkumbinhsn/try-catch",
-  "version": "0.0.4",
-  "description": "A utility package for handling try-catch blocks in TypeScript.",
-  "main": "./lib/try-catch.js",
-  "module": "./lib/try-catch.js",
-  "types": "./lib/try-catch.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/try-catch.d.ts",
-      "import": "./lib/try-catch.js",
-      "require": "./lib/try-catch.js"
-    }
-  },
-  "files": [
-    "lib"
+  "name": "ts-try-catch",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
-  "engines": {
-    "node": ">=16"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
-    "test": "tsc -p tsconfig.json"
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "typecheck": "tsc -b packages/*/tsconfig.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shkumbinhasani/ts-try-catch.git"
   },
-  "keywords": [
-    "typescript",
-    "try-catch",
-    "error-handling",
-    "type-safe",
-    "utility",
-    "exception-handling",
-    "functional-programming",
-    "result-type"
-  ],
   "author": "Shkumbin Hasani",
-  "license": "MIT",
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  }
+  "license": "MIT"
 }

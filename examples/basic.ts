@@ -1,4 +1,4 @@
-import { tryCatch, tc, type Throws } from "./lib/try-catch";
+import { tryCatch, tc, type Throws } from "@shkumbinhsn/try-catch";
 
 class CustomError extends Error { }
 

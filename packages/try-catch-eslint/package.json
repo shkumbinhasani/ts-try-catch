@@ -1,0 +1,46 @@
+{
+  "name": "@shkumbinhsn/try-catch-eslint",
+  "version": "0.0.1",
+  "description": "ESLint plugin to enforce try-catch patterns with @shkumbinhsn/try-catch",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc --noEmit"
+  },
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "typescript",
+    "try-catch",
+    "error-handling"
+  ],
+  "peerDependencies": {
+    "eslint": ">=8.0.0",
+    "@typescript-eslint/parser": ">=6.0.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.56.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/utils": "^6.0.0"
+  },
+  "author": "Shkumbin Hasani",
+  "license": "MIT"
+}
