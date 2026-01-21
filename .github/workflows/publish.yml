@@ -1,0 +1,44 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    # Only run for stable releases (not prereleases)
+    if: github.event.release.prerelease == false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build packages
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Publish @shkumbinhsn/try-catch
+        run: npm publish --workspace=@shkumbinhsn/try-catch --access public --provenance
+        continue-on-error: true
+
+      - name: Publish @shkumbinhsn/try-catch-eslint
+        run: npm publish --workspace=@shkumbinhsn/try-catch-eslint --access public --provenance
+        continue-on-error: true

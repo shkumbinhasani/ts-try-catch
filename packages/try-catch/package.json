@@ -1,0 +1,45 @@
+{
+  "name": "@shkumbinhsn/try-catch",
+  "version": "0.0.5",
+  "description": "A utility package for handling try-catch blocks in TypeScript with full type inference.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "typescript",
+    "try-catch",
+    "error-handling",
+    "type-safe",
+    "utility",
+    "exception-handling",
+    "functional-programming",
+    "result-type"
+  ],
+  "author": "Shkumbin Hasani",
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^1.2.0"
+  }
+}
