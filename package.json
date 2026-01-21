@@ -10,6 +10,7 @@
     "typecheck": "tsc -b packages/*/tsconfig.json"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "typescript": "^5.0.0"
   },
   "repository": {
