@@ -1,5 +1,11 @@
 # @shkumbinhsn/try-catch-eslint
 
+## 0.1.3
+
+### Patch Changes
+
+- cc0cd17: Fix CI/CD workflow to properly publish to npm after creating GitHub releases
+
 ## 0.1.2
 
 ### Patch Changes
