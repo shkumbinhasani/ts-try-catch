@@ -1,200 +1,152 @@
 ![cowboy trying to catch a horse](https://i.imgur.com/TzMOUUL.jpeg)
+
+# Type-Safe Try-Catch Pattern for TypeScript
+
 [![npm version](https://img.shields.io/npm/v/@shkumbinhsn/try-catch.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch)
 [![npm downloads](https://img.shields.io/npm/dm/@shkumbinhsn/try-catch.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch)
-# Type-Safe Try-Catch Pattern for TypeScript
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight TypeScript utility that provides type-safe error handling through a functional approach. This library allows you to explicitly define error types while maintaining full TypeScript inference and zero runtime overhead.
 
-## Installation
+## Packages
+
+This monorepo contains two packages:
+
+| Package | Description | Version |
+|---------|-------------|---------|
+| [`@shkumbinhsn/try-catch`](./packages/try-catch) | Core library with `tryCatch()` and `Throws<E>` types | [![npm](https://img.shields.io/npm/v/@shkumbinhsn/try-catch.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch) |
+| [`@shkumbinhsn/try-catch-eslint`](./packages/try-catch-eslint) | ESLint plugin to enforce type-safe error handling | [![npm](https://img.shields.io/npm/v/@shkumbinhsn/try-catch-eslint.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch-eslint) |
+
+## Quick Start
+
+### Installation
 
 ```bash
+# Core library
 npm install @shkumbinhsn/try-catch
+
+# ESLint plugin (optional but recommended)
+npm install -D @shkumbinhsn/try-catch-eslint
 ```
 
-## Key Features
-
-- **🔒 Type Safety**: Explicitly declare what errors your functions can throw
-- **🎯 Zero Runtime Overhead**: Types are compile-time only using TypeScript's structural typing
-- **🔄 Async/Sync Support**: Works seamlessly with both synchronous and asynchronous functions
-- **📦 Lightweight**: Minimal footprint with no dependencies
-- **🧠 Smart Inference**: Falls back to standard TypeScript inference when no error types are specified
-- **🛡️ Tuple-based**: Returns `[data, error]` tuples for explicit error handling
-
-## Why Use This Pattern?
-
-Traditional try-catch blocks in TypeScript don't provide type information about what errors might be thrown. This library solves that by:
-
-1. Making error types explicit in function signatures
-2. Forcing explicit error handling through tuple destructuring
-3. Providing better IntelliSense and type checking
-4. Maintaining compatibility with existing code
-
----
-
-## Example Code
-
-### Defining a Function with Error Handling
+### Basic Usage
 
 ```typescript
-import { tryCatch, type Throws } from "@shkumbinhsn/try-catch";
+import { tryCatch, tc, type Throws } from "@shkumbinhsn/try-catch";
 
-class CustomError extends Error {}
-
-function iMightFail(): string & Throws<CustomError> {
-  const random = Math.random();
-  if (random > 0.2) {
-    return "success";
-  } else if (random > 0.5) {
-    throw new CustomError("Something went wrong");
-  }
-  throw new Error("Generic error");
+// Define custom error types
+class ValidationError extends Error {
+  name = "ValidationError" as const;
+}
+class NetworkError extends Error {
+  name = "NetworkError" as const;
 }
 
-const [data, error] = tryCatch(() => iMightFail());
+// Declare what errors a function can throw
+function fetchUser(id: string): Promise<User> & Throws<ValidationError | NetworkError> {
+  if (!id) throw new ValidationError("ID required");
+  return fetch(`/api/users/${id}`).then(r => {
+    if (!r.ok) throw new NetworkError("Request failed");
+    return r.json();
+  });
+}
+
+// Use tryCatch for type-safe error handling
+const [user, error] = await tryCatch(() => fetchUser("123"));
 
 if (error) {
-  console.log("Operation failed:", error.message);
-  // TypeScript knows: error is Error | CustomError
+  // TypeScript knows: error is Error | ValidationError | NetworkError
+  console.error("Failed:", error.message);
 } else {
-  console.log("Operation succeeded:", data);
-  // TypeScript knows: data is string
-}
-```
-
-### Async Functions with Errors
-
-```typescript
-async function fetchUserData(id: string): Promise<User & Throws<ValidationError | NetworkError>> {
-  if (!id) {
-    throw new ValidationError("User ID is required");
-  }
-  
-  const response = await fetch(`/api/users/${id}`);
-  if (!response.ok) {
-    throw new NetworkError("Failed to fetch user data");
-  }
-  
-  return response.json();
-}
-
-const [userData, error] = await tryCatch(() => fetchUserData("123"));
-
-if (error) {
-  if (error instanceof ValidationError) {
-    console.log("Validation error:", error.message);
-  } else if (error instanceof NetworkError) {
-    console.log("Network error:", error.message);
-  } else {
-    console.log("Unexpected error:", error.message);
-  }
-} else {
-  console.log("User data:", userData);
-  // TypeScript knows: userData is User
+  // TypeScript knows: user is User
+  console.log("User:", user.name);
 }
 ```
 
 ### Using `tc()` for Inferred Return Types
 
-When you want TypeScript to infer your return type but still declare possible errors, use the `tc()` helper:
+When you want TypeScript to infer your return type but still declare possible errors:
 
 ```typescript
-import { tryCatch, tc } from "@shkumbinhsn/try-catch";
-
-class APIError extends Error {}
-class NetworkError extends Error {}
-
-function fetchUser() {
-  const user = { id: "1", name: "Ada", email: "ada@example.com" };
-  // Return type is inferred: { id: string; name: string; email: string } & Throws<APIError | NetworkError>
-  return tc(user, [APIError, NetworkError]);
-}
-
-const [data, error] = tryCatch(fetchUser);
-
-if (error) {
-  console.log("Failed:", error.message);
-  // TypeScript knows: error is Error | APIError | NetworkError
-} else {
-  console.log("User:", data.email);
-  // TypeScript knows: data is { id: string; name: string; email: string }
+function getConfig() {
+  const config = loadConfigFromDisk();
+  return tc(config).mightThrow<ConfigError | FileNotFoundError>();
 }
 ```
 
-This is useful when you don't want to manually specify complex return types but still want typed errors.
+## Key Features
 
-### Without Explicit Error Types
+- **Type Safety**: Explicitly declare what errors your functions can throw
+- **Zero Runtime Overhead**: Types are compile-time only using TypeScript's structural typing
+- **Async/Sync Support**: Works seamlessly with both synchronous and asynchronous functions
+- **Lightweight**: Minimal footprint with no dependencies
+- **Smart Inference**: Falls back to standard TypeScript inference when no error types are specified
+- **Tuple-based**: Returns `[data, error]` tuples for explicit error handling
+- **ESLint Plugin**: Enforce best practices with automated linting rules
 
-When you don't specify error types, the library falls back to standard TypeScript inference:
+## ESLint Plugin
 
-```typescript
-function regularFunction() {
-  return "success";
-}
+The ESLint plugin provides three rules to enforce type-safe error handling:
 
-const [data, error] = tryCatch(regularFunction);
+```javascript
+// eslint.config.js
+import tryCatchPlugin from "@shkumbinhsn/try-catch-eslint";
 
-if (error) {
-  console.log("Operation failed:", error.message);
-  // TypeScript knows: error is Error
-} else {
-  console.log("Operation succeeded:", data);
-  // TypeScript knows: data is string
-}
+export default [
+  {
+    plugins: {
+      "@shkumbinhsn/try-catch-eslint": tryCatchPlugin,
+    },
+    rules: {
+      // Require Throws<E> declaration on functions with throw statements
+      "@shkumbinhsn/try-catch-eslint/require-throws-declaration": "error",
+      
+      // Warn when calling Throws<> functions without tryCatch()
+      "@shkumbinhsn/try-catch-eslint/require-try-catch": "warn",
+      
+      // Error when using tryCatch() data without checking error first
+      "@shkumbinhsn/try-catch-eslint/no-unhandled-throws": "error",
+    },
+  },
+];
 ```
 
-## API Reference
+See the [ESLint plugin documentation](./packages/try-catch-eslint/README.md) for more details.
 
-### `tryCatch<T>(fn: () => T): TryCatchReturn<T>`
+## Why Use This Pattern?
 
-Executes a function within a try-catch block and returns a result tuple.
+Traditional try-catch blocks in TypeScript don't provide type information about what errors might be thrown. This library solves that by:
 
-**Parameters:**
-- `fn`: Function to execute (can be sync or async)
+1. **Making error types explicit** in function signatures
+2. **Forcing explicit error handling** through tuple destructuring
+3. **Providing better IntelliSense** and type checking
+4. **Maintaining compatibility** with existing code
 
-**Returns:**
-- `[data, null]` on success
-- `[null, error]` on failure
+## Documentation
 
-### `Throws<T extends Error>`
-
-Type utility for declaring error types in function signatures.
-
-**Usage:**
-```typescript
-function myFunction(): ReturnType & Throws<MyError> {
-  // function implementation
-}
-```
-
-### `tc<T, E>(value: T, errors: E[]): T & Throws<...>`
-
-Brands a return value with error types while letting TypeScript infer the return type.
-
-**Parameters:**
-- `value`: The value to return
-- `errors`: Array of error class constructors (used only for type inference)
-
-**Returns:**
-- The same value, branded with error types
-
-**Usage:**
-```typescript
-function myFunction() {
-  const result = computeSomething();
-  return tc(result, [ErrorA, ErrorB]);
-}
-```
-
-## Limitations
-
-- **Duplicate Definitions**: Error types must be declared in both the throw statement and return type
-- **Runtime Validation**: No runtime enforcement of declared error types
-- **Learning Curve**: Requires understanding of TypeScript's structural typing
-- **Type Stripping**: TypeScript cannot reliably extract base types from branded intersections ([TS#62985](https://github.com/microsoft/TypeScript/issues/62985)). Error classes with custom instance properties may cause inconsistent type inference.
+- [Core Library Documentation](./packages/try-catch/README.md)
+- [ESLint Plugin Documentation](./packages/try-catch-eslint/README.md)
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
+
+### Development
+
+```bash
+# Clone the repo
+git clone https://github.com/shkumbinhasani/ts-try-catch.git
+cd ts-try-catch
+
+# Install dependencies
+npm install
+
+# Build all packages
+npm run build
+
+# Run tests
+npm test
+```
 
 ## License
 
