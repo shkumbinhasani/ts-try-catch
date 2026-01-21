@@ -10,6 +10,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
+  id-token: write
 
 jobs:
   release:
@@ -24,8 +25,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: npm ci
@@ -83,3 +85,14 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Publish to npm (runs after release is created)
+      - name: Publish @shkumbinhsn/try-catch
+        if: steps.changesets.outputs.hasChangesets == 'false' && steps.check_tag.outputs.exists == 'false'
+        run: npm publish --workspace=@shkumbinhsn/try-catch --access public --provenance
+        continue-on-error: true
+
+      - name: Publish @shkumbinhsn/try-catch-eslint
+        if: steps.changesets.outputs.hasChangesets == 'false' && steps.check_tag.outputs.exists == 'false'
+        run: npm publish --workspace=@shkumbinhsn/try-catch-eslint --access public --provenance
+        continue-on-error: true
