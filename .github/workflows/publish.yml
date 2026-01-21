@@ -1,8 +1,9 @@
 name: Publish
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
@@ -12,8 +13,6 @@ jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
-    # Only run for stable releases (not prereleases)
-    if: github.event.release.prerelease == false
 
     steps:
       - name: Checkout
