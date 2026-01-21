@@ -39,7 +39,7 @@ jobs:
       - name: Create Release Pull Request
         uses: changesets/action@v1
         with:
-          version: npx changeset version && npm install --package-lock-only
+          version: npm run version
           commit: "chore: release packages"
           title: "chore: release packages"
         env:
