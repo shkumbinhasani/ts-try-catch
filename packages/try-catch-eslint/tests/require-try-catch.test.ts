@@ -1,17 +1,26 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
-import { requireTryCatch } from "../src/rules/require-try-catch";
+import { requireTryCatch } from "../src/rules/require-try-catch.js";
 import { describe, it, afterAll } from "vitest";
-import * as path from "path";
+import parser from "@typescript-eslint/parser";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 RuleTester.afterAll = afterAll;
 RuleTester.describe = describe;
 RuleTester.it = it;
 
 const ruleTester = new RuleTester({
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    project: "./tsconfig.test.json",
-    tsconfigRootDir: path.join(__dirname),
+  languageOptions: {
+    parser,
+    parserOptions: {
+      projectService: {
+        allowDefaultProject: ["*.ts"],
+      },
+      tsconfigRootDir: __dirname,
+    },
   },
 });
 
@@ -19,7 +28,7 @@ ruleTester.run("require-try-catch", requireTryCatch, {
   valid: [
     // Function with Throws<> wrapped in tryCatch
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         type Throws<T extends Error> = { __error?: T };
         class CustomError extends Error {}
@@ -34,7 +43,7 @@ ruleTester.run("require-try-catch", requireTryCatch, {
     },
     // Regular function without Throws<>
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         function safeFn(): string {
           return "ok";
@@ -44,7 +53,7 @@ ruleTester.run("require-try-catch", requireTryCatch, {
     },
     // tc() call should be ignored
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         type Throws<T extends Error> = { __error?: T };
         function tc<T>(value: T): { mightThrow<E extends Error>(): T & Throws<E> } {
@@ -55,7 +64,7 @@ ruleTester.run("require-try-catch", requireTryCatch, {
     },
     // tryCatch call itself should be ignored
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         function tryCatch<T>(fn: () => T): [T, null] | [null, Error] {
           try { return [fn(), null]; } catch (e) { return [null, e as Error]; }
@@ -65,7 +74,7 @@ ruleTester.run("require-try-catch", requireTryCatch, {
     },
     // Nested inside tryCatch callback
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         type Throws<T extends Error> = { __error?: T };
         class CustomError extends Error {}
@@ -84,7 +93,7 @@ ruleTester.run("require-try-catch", requireTryCatch, {
   invalid: [
     // Function with Throws<> not wrapped
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         type Throws<T extends Error> = { __error?: T };
         class CustomError extends Error {}
@@ -93,11 +102,30 @@ ruleTester.run("require-try-catch", requireTryCatch, {
         }
         const result = riskyFn();
       `,
-      errors: [{ messageId: "requireTryCatch", data: { name: "riskyFn" } }],
+      errors: [
+        {
+          messageId: "requireTryCatch",
+          data: { name: "riskyFn" },
+          suggestions: [
+            {
+              messageId: "suggestWrapInTryCatch",
+              data: { name: "riskyFn" },
+              output: `
+        type Throws<T extends Error> = { __error?: T };
+        class CustomError extends Error {}
+        function riskyFn(): string & Throws<CustomError> {
+          return "ok";
+        }
+        const result = tryCatch(() => riskyFn());
+      `,
+            },
+          ],
+        },
+      ],
     },
     // Async function with Throws<>
     {
-      filename: path.join(__dirname, "file.ts"),
+      filename: join(__dirname, "file.ts"),
       code: `
         type Throws<T extends Error> = { __error?: T };
         class CustomError extends Error {}
@@ -107,7 +135,24 @@ ruleTester.run("require-try-catch", requireTryCatch, {
         asyncRiskyFn();
       `,
       errors: [
-        { messageId: "requireTryCatch", data: { name: "asyncRiskyFn" } },
+        {
+          messageId: "requireTryCatch",
+          data: { name: "asyncRiskyFn" },
+          suggestions: [
+            {
+              messageId: "suggestWrapInTryCatch",
+              data: { name: "asyncRiskyFn" },
+              output: `
+        type Throws<T extends Error> = { __error?: T };
+        class CustomError extends Error {}
+        async function asyncRiskyFn(): Promise<string & Throws<CustomError>> {
+          return "ok";
+        }
+        tryCatch(() => asyncRiskyFn());
+      `,
+            },
+          ],
+        },
       ],
     },
   ],

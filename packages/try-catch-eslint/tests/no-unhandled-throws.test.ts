@@ -1,13 +1,16 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
-import { noUnhandledThrows } from "../src/rules/no-unhandled-throws";
+import { noUnhandledThrows } from "../src/rules/no-unhandled-throws.js";
 import { describe, it, afterAll } from "vitest";
+import parser from "@typescript-eslint/parser";
 
 RuleTester.afterAll = afterAll;
 RuleTester.describe = describe;
 RuleTester.it = it;
 
 const ruleTester = new RuleTester({
-  parser: "@typescript-eslint/parser",
+  languageOptions: {
+    parser,
+  },
 });
 
 ruleTester.run("no-unhandled-throws", noUnhandledThrows, {

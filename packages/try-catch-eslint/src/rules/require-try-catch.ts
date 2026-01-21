@@ -81,11 +81,13 @@ export const requireTryCatch = createRule({
     docs: {
       description:
         "Require functions with Throws<> return types to be wrapped in tryCatch()",
-      requiresTypeChecking: true,
     },
+    hasSuggestions: true,
     messages: {
       requireTryCatch:
         "Function '{{name}}' has a Throws<> return type and should be wrapped in tryCatch()",
+      suggestWrapInTryCatch:
+        "Wrap in tryCatch(() => {{name}}())",
     },
     schema: [],
   },
@@ -93,6 +95,7 @@ export const requireTryCatch = createRule({
   create(context) {
     const services = ESLintUtils.getParserServices(context);
     const checker = services.program.getTypeChecker();
+    const sourceCode = context.sourceCode;
 
     return {
       CallExpression(node) {
@@ -144,12 +147,24 @@ export const requireTryCatch = createRule({
                 ? node.callee.property.name
                 : "function";
 
+          const callText = sourceCode.getText(node);
+
           context.report({
             node,
             messageId: "requireTryCatch",
             data: {
               name: calleeName,
             },
+            suggest: [
+              {
+                messageId: "suggestWrapInTryCatch",
+                data: { name: calleeName },
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                fix(fixer: any) {
+                  return fixer.replaceText(node, `tryCatch(() => ${callText})`);
+                },
+              },
+            ],
           });
         }
       },
