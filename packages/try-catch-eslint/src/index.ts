@@ -5,7 +5,6 @@ import { requireThrowsDeclaration } from "./rules/require-throws-declaration.js"
 const plugin = {
   meta: {
     name: "@shkumbinhsn/try-catch-eslint",
-    version: "0.0.3",
   },
   rules: {
     "require-try-catch": requireTryCatch,

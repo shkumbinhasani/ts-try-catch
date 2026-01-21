@@ -4,7 +4,6 @@ import plugin from "../src/index";
 describe("eslint plugin", () => {
   it("exports plugin metadata", () => {
     expect(plugin.meta.name).toBe("@shkumbinhsn/try-catch-eslint");
-    expect(plugin.meta.version).toBe("0.0.3");
   });
 
   it("exports rules", () => {

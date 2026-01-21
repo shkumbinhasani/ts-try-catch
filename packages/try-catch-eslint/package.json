@@ -36,16 +36,16 @@
   ],
   "peerDependencies": {
     "eslint": "^8.0.0 || ^9.0.0",
-    "typescript-eslint": "^8.0.0"
+    "@typescript-eslint/parser": "^8.0.0",
+    "typescript": ">=4.7.0"
   },
   "peerDependenciesMeta": {
-    "typescript-eslint": {
-      "optional": true
+    "@typescript-eslint/parser": {
+      "optional": false
     }
   },
   "dependencies": {
-    "@typescript-eslint/utils": "^8.0.0",
-    "typescript": "^5.0.0"
+    "@typescript-eslint/utils": "^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.9",
