@@ -1,5 +1,11 @@
 # @shkumbinhsn/try-catch-eslint
 
+## 0.1.1
+
+### Patch Changes
+
+- 995dd4d: Add comprehensive README documentation for both packages
+
 ## 0.1.0
 
 ### Minor Changes
