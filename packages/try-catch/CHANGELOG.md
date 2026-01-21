@@ -1,5 +1,11 @@
 # @shkumbinhsn/try-catch
 
+## 0.0.7
+
+### Patch Changes
+
+- 995dd4d: Add comprehensive README documentation for both packages
+
 ## 0.0.6
 
 ### Patch Changes
