@@ -4,6 +4,10 @@ on:
   release:
     types: [created]
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     name: Publish to npm
@@ -28,12 +32,13 @@ jobs:
       - name: Build packages
         run: npm run build
 
+      - name: Run tests
+        run: npm test
+
       - name: Publish @shkumbinhsn/try-catch
-        run: npm publish --workspace=@shkumbinhsn/try-catch --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --workspace=@shkumbinhsn/try-catch --access public --provenance
+        continue-on-error: true
 
       - name: Publish @shkumbinhsn/try-catch-eslint
-        run: npm publish --workspace=@shkumbinhsn/try-catch-eslint --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --workspace=@shkumbinhsn/try-catch-eslint --access public --provenance
+        continue-on-error: true
