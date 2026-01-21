@@ -39,6 +39,11 @@
   ],
   "author": "Shkumbin Hasani",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shkumbinhasani/ts-try-catch.git",
+    "directory": "packages/try-catch"
+  },
   "devDependencies": {
     "vitest": "^1.2.0"
   }

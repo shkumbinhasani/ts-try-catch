@@ -55,5 +55,10 @@
     "vitest": "^1.2.0"
   },
   "author": "Shkumbin Hasani",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shkumbinhasani/ts-try-catch.git",
+    "directory": "packages/try-catch-eslint"
+  }
 }
