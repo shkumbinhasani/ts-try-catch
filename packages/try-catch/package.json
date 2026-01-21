@@ -1,6 +1,6 @@
 {
   "name": "@shkumbinhsn/try-catch",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A utility package for handling try-catch blocks in TypeScript with full type inference.",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
