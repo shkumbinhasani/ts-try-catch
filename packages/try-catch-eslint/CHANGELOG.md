@@ -1,5 +1,11 @@
 # @shkumbinhsn/try-catch-eslint
 
+## 0.1.2
+
+### Patch Changes
+
+- 3770f50: Test automated release flow
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @shkumbinhsn/try-catch
 
+## 0.0.8
+
+### Patch Changes
+
+- 3770f50: Test automated release flow
+
 ## 0.0.7
 
 ### Patch Changes
