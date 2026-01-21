@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,12 +30,15 @@ jobs:
       - name: Build packages
         run: npm run build
 
+      - name: Run tests
+        run: npm test
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
           publish: npx changeset publish
-          version: npx changeset version
+          version: npx changeset version && npm install --package-lock-only
           commit: "chore: release packages"
           title: "chore: release packages"
         env:
