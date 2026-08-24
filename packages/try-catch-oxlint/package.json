@@ -1,6 +1,6 @@
 {
   "name": "@shkumbinhsn/try-catch-oxlint",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Oxlint plugin to enforce try-catch patterns with @shkumbinhsn/try-catch",
   "type": "module",
   "main": "./dist/index.js",
