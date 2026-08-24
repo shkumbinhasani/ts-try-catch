@@ -10,12 +10,13 @@ A lightweight TypeScript utility that provides type-safe error handling through 
 
 ## Packages
 
-This monorepo contains two packages:
+This monorepo contains three packages:
 
 | Package | Description | Version |
 |---------|-------------|---------|
 | [`@shkumbinhsn/try-catch`](./packages/try-catch) | Core library with `tryCatch()` and `Throws<E>` types | [![npm](https://img.shields.io/npm/v/@shkumbinhsn/try-catch.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch) |
 | [`@shkumbinhsn/try-catch-eslint`](./packages/try-catch-eslint) | ESLint plugin to enforce type-safe error handling | [![npm](https://img.shields.io/npm/v/@shkumbinhsn/try-catch-eslint.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch-eslint) |
+| [`@shkumbinhsn/try-catch-oxlint`](./packages/try-catch-oxlint) | Oxlint plugin with the same rules, without type-awareness | [![npm](https://img.shields.io/npm/v/@shkumbinhsn/try-catch-oxlint.svg)](https://www.npmjs.com/package/@shkumbinhsn/try-catch-oxlint) |
 
 ## Quick Start
 
@@ -27,6 +28,9 @@ npm install @shkumbinhsn/try-catch
 
 # ESLint plugin (optional but recommended)
 npm install -D @shkumbinhsn/try-catch-eslint
+
+# Or the same rules on oxlint
+npm install -D @shkumbinhsn/try-catch-oxlint oxlint
 ```
 
 ### Basic Usage
@@ -82,7 +86,7 @@ function getConfig() {
 - **Lightweight**: Minimal footprint with no dependencies
 - **Smart Inference**: Falls back to standard TypeScript inference when no error types are specified
 - **Tuple-based**: Returns `[data, error]` tuples for explicit error handling
-- **ESLint Plugin**: Enforce best practices with automated linting rules
+- **Linter Plugins**: Enforce best practices with automated rules on ESLint or oxlint
 
 ## ESLint Plugin
 
@@ -113,6 +117,26 @@ export default [
 
 See the [ESLint plugin documentation](./packages/try-catch-eslint/README.md) for more details.
 
+## Oxlint Plugin
+
+The same three rules also run on [oxlint](https://oxc.rs):
+
+```json
+// .oxlintrc.json
+{
+  "jsPlugins": ["@shkumbinhsn/try-catch-oxlint"],
+  "rules": {
+    "try-catch/require-throws-declaration": "error",
+    "try-catch/require-try-catch": "warn",
+    "try-catch/no-unhandled-throws": "error"
+  }
+}
+```
+
+Oxlint JS plugins run without a TypeScript type checker, so `require-throws-declaration` reads the declaration written at the function itself and `require-try-catch` only sees functions declared in the same file. Use the ESLint plugin when you need full type-aware checking, or run both: oxlint for fast feedback, ESLint for the type-aware pass.
+
+See the [oxlint plugin documentation](./packages/try-catch-oxlint/README.md) for more details.
+
 ## Why Use This Pattern?
 
 Traditional try-catch blocks in TypeScript don't provide type information about what errors might be thrown. This library solves that by:
@@ -126,6 +150,7 @@ Traditional try-catch blocks in TypeScript don't provide type information about 
 
 - [Core Library Documentation](./packages/try-catch/README.md)
 - [ESLint Plugin Documentation](./packages/try-catch-eslint/README.md)
+- [Oxlint Plugin Documentation](./packages/try-catch-oxlint/README.md)
 
 ## Contributing
 
