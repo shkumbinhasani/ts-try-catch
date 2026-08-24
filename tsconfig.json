@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/try-catch" },
-    { "path": "./packages/try-catch-eslint" }
+    { "path": "./packages/try-catch-eslint" },
+    { "path": "./packages/try-catch-oxlint" }
   ]
 }
