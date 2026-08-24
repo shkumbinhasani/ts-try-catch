@@ -1,7 +1,7 @@
 import { requireTryCatch } from "../src/rules/require-try-catch.js";
-import { createRuleTester } from "./rule-tester.js";
+import { runRuleTests } from "./rule-tester.js";
 
-createRuleTester().run("require-try-catch", requireTryCatch, {
+await runRuleTests("require-try-catch", requireTryCatch, {
   valid: [
     // Wrapped in tryCatch().
     `function fetchUser(id: string): Throws<NetworkError> {

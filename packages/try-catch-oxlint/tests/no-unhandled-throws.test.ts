@@ -1,7 +1,7 @@
 import { noUnhandledThrows } from "../src/rules/no-unhandled-throws.js";
-import { createRuleTester } from "./rule-tester.js";
+import { runRuleTests } from "./rule-tester.js";
 
-createRuleTester().run("no-unhandled-throws", noUnhandledThrows, {
+await runRuleTests("no-unhandled-throws", noUnhandledThrows, {
   valid: [
     // Data read in the else branch of an error check.
     `const [user, error] = tryCatch(() => fetchUser("1"));

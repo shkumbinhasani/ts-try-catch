@@ -1,7 +1,7 @@
 import { requireThrowsDeclaration } from "../src/rules/require-throws-declaration.js";
-import { createRuleTester } from "./rule-tester.js";
+import { runRuleTests } from "./rule-tester.js";
 
-createRuleTester().run("require-throws-declaration", requireThrowsDeclaration, {
+await runRuleTests("require-throws-declaration", requireThrowsDeclaration, {
   valid: [
     // Declared through the return type annotation.
     `function fetchUser(id: string): Throws<ValidationError> {
